@@ -1,0 +1,3 @@
+[submodule "deep_moderator_common"]
+	path = deep_moderator_common
+	url = git@gitlab.com:deepmoderator/deep_moderator_common.git

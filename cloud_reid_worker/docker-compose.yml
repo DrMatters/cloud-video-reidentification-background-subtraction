@@ -1,0 +1,7 @@
+version: '3'
+services:
+  worker:
+    image: deep_moderator_worker:latest
+    build: .
+    volumes:
+      - $GOOGLE_APPLICATION_CREDENTIALS:/root/gcloud.json
