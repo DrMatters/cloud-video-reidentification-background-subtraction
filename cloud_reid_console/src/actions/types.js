@@ -1,0 +1,14 @@
+export const LOGIN = 'LOGIN';
+export const LOGGEDIN = 'LOGGEDIN';
+export const LOGOUT = 'LOGOUT';
+
+export const REQUEST_GROUPS = 'REQUEST_GROUPS';
+export const RECEIVE_GROUPS = 'RECEIVE_GROUPS';
+
+export const REQUEST_COMMENTS = 'REQUEST_COMMENTS';
+export const RECEIVE_COMMENTS = 'RECEIVE_COMMENTS';
+
+export const SET_ACTIVE_GROUPS = 'SET_ACTIVE_GROUPS';
+
+export const RATE_COMMENT = 'RATE_COMMENT';
+export const RECEIVE_COMMENT_RATE = 'RECEIVE_COMMENT_RATE';

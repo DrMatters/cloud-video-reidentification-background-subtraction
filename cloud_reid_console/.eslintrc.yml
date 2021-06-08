@@ -1,0 +1,9 @@
+extends: airbnb
+plugins: []
+env:
+  browser: true
+  node: true
+rules:
+  'no-console':
+    - 'warn'
+    - allow: ['warn', 'error']

@@ -1,0 +1,57 @@
+stages:
+  - build
+  - deploy
+
+build-npm:
+  stage: build
+  image: node:12-alpine
+  before_script:
+    - yarn install --non-interactive --production=false --frozen-lockfile
+  script:
+    - NODE_ENV=production yarn build
+  cache:
+    paths:
+      - node_modules/
+      - .yarn
+  artifacts:
+    paths:
+      - dist
+      - .firebaserc
+      - firebase.json
+
+deploy_prod:
+  stage: deploy
+  image: andreysenov/firebase-tools:7.3.1
+  script:
+    - firebase deploy --token $FIREBASE_TOKEN
+  only:
+    - master
+  when: manual
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: production
+    url: https://ai-moderator.web.app
+  dependencies:
+    - build-npm
+
+deploy_staging:
+  stage: deploy
+  image: alpine
+  before_script:
+    - apk add --update --no-cache rsync openssh-client
+    - mkdir -p /root/.ssh
+    - eval "$(ssh-agent -s)"
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' |  ssh-add -
+    - ssh-keyscan -H $DEPLOY_TARGET >> ~/.ssh/known_hosts
+  script:
+    - rsync --delete -r dist/ oleggator@$DEPLOY_TARGET:/opt/www/
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: staging
+    url: http://$DEPLOY_TARGET
+  dependencies:
+    - build-npm
+  tags:
+    - staging
