@@ -1,0 +1,12 @@
+version: '3'
+services:
+  api:
+    image: registry.gitlab.com/deepmoderator/deep_moderator_worker:latest
+    build: .
+    volumes:
+      - $GOOGLE_APPLICATION_CREDENTIALS:/root/gcloud.json
+    ports:
+      - 8080:8080
+    environment:
+      API_KEY: $API_KEY
+      ORIGINS: $ORIGINS

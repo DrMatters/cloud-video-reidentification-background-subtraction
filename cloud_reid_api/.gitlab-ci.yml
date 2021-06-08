@@ -1,0 +1,10 @@
+stages:
+  - deploy
+
+appengine_deploy:
+  stage: deploy
+  image: google/cloud-sdk:alpine
+  before_script:
+    - gcloud config set project $GCLOUD_PROJECT
+    - gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
+  script: gcloud app deploy
