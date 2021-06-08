@@ -1,0 +1,4 @@
+flask
+google-cloud-pubsub
+google-cloud-datastore
+pydantic

@@ -1,0 +1,65 @@
+stages:
+  - deploy
+
+.deploy_to_google_cloud_functions:
+  stage: deploy
+  image: google/cloud-sdk:alpine
+  before_script:
+    - gcloud config set project ai-moderator
+    - gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS"
+  only:
+    changes:
+      - deep_moderator_common
+    refs:
+      - master
+
+deploy_event_collector:
+  extends: .deploy_to_google_cloud_functions
+  script:
+    - cp -r deep_moderator_common ./event_collector/deep_moderator_common
+    - >
+      gcloud functions deploy event_collector
+      --entry-point event_collector
+      --region europe-west1
+      --runtime python37
+      --trigger-http
+      --memory 128MB
+      --source ./event_collector
+  only:
+    changes:
+      - event_collector/**/*
+
+deploy_vk_event_handler:
+  extends: .deploy_to_google_cloud_functions
+  script:
+    - cp -r deep_moderator_common ./event_handler/deep_moderator_common
+    - >
+      gcloud functions deploy vk_event_handler
+      --entry-point event_handler
+      --region europe-west1
+      --runtime python37
+      --trigger-http
+      --memory 128MB
+      --source ./event_handler
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  only:
+    changes:
+      - event_handler/**/*
+      - deep_moderator_common/**/*
+
+deploy_response_saver:
+  extends: .deploy_to_google_cloud_functions
+  script:
+    - cp -r deep_moderator_common ./classification_result_saver/deep_moderator_common
+    - >
+      gcloud functions deploy response-saver
+      --entry-point event_handler
+      --region europe-west1
+      --runtime python37
+      --trigger-topic add_classified_comment
+      --memory 128MB
+      --source ./classification_result_saver
+  only:
+    changes:
+      - classification_result_saver/**/*

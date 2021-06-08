@@ -1,0 +1,87 @@
+openapi: '3.0.0'
+info:
+  version: 0.0.1
+  title: DeepModerator Functions
+paths:
+  /event_collector:
+    post:
+      requestBody:
+        description: push event
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupEvent'
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    GroupEvent:
+      type: object
+      required:
+        - type
+        - group_id
+        - object
+      properties:
+        type:
+          type: string
+          enum:
+            - wall_reply_new
+            - wall_reply_edit
+            - wall_reply_restore
+            - wall_reply_delete
+        object:
+          type: object
+          enum:
+            - $ref: '#/components/schemas/Comment'
+            - $ref: '#/components/schemas/CommentDeleteInfo'
+        group_id:
+          type: integer
+        secret:
+          type: string
+    Comment:
+      type: object
+      required: 
+        - id
+        - from_id
+        - date
+        - text
+      properties:
+        id:
+          type: integer
+        from_id:
+          type: integer
+        date:
+          type: integer
+        text:
+          type: string
+        reply_to_user:
+          type: string
+        reply_to_comment:
+          type: integer
+        attachment:
+          type: array
+        parrent_stack:
+          type: array
+        thread:
+          type: object
+        post_id:
+          type: object
+        post_owner_id:
+          type: object
+    CommentDeleteInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        owner_id:
+          type: integer
+        deleter_id:
+          type: integer
+        post_id:
+          type: integer
